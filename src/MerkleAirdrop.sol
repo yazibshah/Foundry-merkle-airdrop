@@ -25,7 +25,7 @@ contract MerkleAirdrop{
         // some logic to populate the claimers array
     }
 
-    function claim(address account,uint256 amount , bytes32[] calldata merkleProof) external{
+    function claim(address account,uint256 amount , bytes32[] calldata merkleProof , uint8 v , bytes32 r , bytes32 s) external{
         if(s_hasClaimed[account]){
             revert MerkleAirdrop__alreadyClaimed();
         }

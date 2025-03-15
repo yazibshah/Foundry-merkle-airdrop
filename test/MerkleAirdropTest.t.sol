@@ -50,4 +50,14 @@ contract MerkleAirdropTest is ZkSyncChainChecker,Test{
 
     }
     
+    function testRevertIfUserAlreadyClaimed() public{
+        airdrop.claim(user , AMOUNT_TO_CLAIM , PROOF);
+        vm.expectRevert(MerkleAirdrop.MerkleAirdrop__alreadyClaimed.selector);
+        airdrop.claim(user , AMOUNT_TO_CLAIM , PROOF);
+    }
+
+    function testIfMerkleProofIsInvalid() public {
+        vm.expectRevert(MerkleAirdrop.MerkleAirdrop__InvalidProof.selector);
+        airdrop.claim(msg.sender , AMOUNT_TO_CLAIM , PROOF);
+    }
 }

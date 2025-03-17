@@ -59,18 +59,24 @@ contract MerkleAirdropTest is ZkSyncChainChecker,Test{
 
     }
     
-    function testRevertIfUserAlreadyClaimed() public{
-        bytes32 digest= airdrop.getMessageHash(user , AMOUNT_TO_CLAIM);
+    function testRevertIfUserAlreadyClaimed() public {
+    bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_CLAIM);
+    (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, digest);
 
-        // vm.prank(user);
-        (uint8 v , bytes32 r , bytes32 s)=vm.sign(userPrivateKey, digest);
+    vm.prank(gasPayer);
+    airdrop.claim(user, AMOUNT_TO_CLAIM, PROOF, v, r, s);
+    
+    console.log("First claim successful. Checking state...");
 
+    // Confirm user balance changed before attempting second claim
+    uint256 balanceAfterClaim = token.balanceOf(user);
+    assertEq(balanceAfterClaim, AMOUNT_TO_CLAIM);
 
-        vm.prank(gasPayer);
-        airdrop.claim(user , AMOUNT_TO_CLAIM , PROOF , v , r ,s);
-        vm.expectRevert(MerkleAirdrop.MerkleAirdrop__alreadyClaimed.selector);
-        airdrop.claim(user , AMOUNT_TO_CLAIM , PROOF , v , r ,s);
-    }
+    vm.expectRevert(MerkleAirdrop.MerkleAirdrop__alreadyClaimed.selector);
+    vm.prank(gasPayer);
+    airdrop.claim(user, AMOUNT_TO_CLAIM, PROOF, v, r, s);
+}
+
 
     function testIfMerkleProofIsInvalid() public {
     bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_CLAIM);

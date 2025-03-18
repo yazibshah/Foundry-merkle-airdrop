@@ -64,3 +64,12 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+
+"Deploy Script"
+- make deploy
+- cast call {contract Address} "getMessageHash(address,uint256)" arg1  arg2 --rpc-url http://localhost:8545
+- cast wallet sign --no-hash {message hash} --private-key {PRIVATE-KEY}
+- forge script script/Interact.s.sol:ClaimAirdrop  --rpc-url http://localhost:8545 --private-key {private-key} --broadcast
+- cast call 0x5FbDB2315678afecb367f032d93F642f64180aa3 "balanceOf(address)" 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+- cast --to-dec {value}

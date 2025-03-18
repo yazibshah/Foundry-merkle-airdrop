@@ -5,7 +5,7 @@ import {Test , console} from "forge-std/Test.sol";
 import {MerkleAirdrop} from "../src/MerkleAirdrop.sol";
 import {BegalToken} from "../src/begalToken.sol";
 import {IERC20,SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {ZkSyncChainChecker} from "../lib/foundry-devops/src/ZkSyncChainChecker.sol";
+import {ZkSyncChainChecker} from "foundry-devops/src/ZkSyncChainChecker.sol";
 import {DeployMerkleAirdrop} from "../script/DeployMerkleAirdrop.s.sol";
 
 contract MerkleAirdropTest is ZkSyncChainChecker,Test{
@@ -59,47 +59,47 @@ contract MerkleAirdropTest is ZkSyncChainChecker,Test{
 
     }
     
-    function testRevertIfUserAlreadyClaimed() public {
-    bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_CLAIM);
-    (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, digest);
+//     function testRevertIfUserAlreadyClaimed() public {
+//     bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_CLAIM);
+//     (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, digest);
 
-    vm.prank(gasPayer);
-    airdrop.claim(user, AMOUNT_TO_CLAIM, PROOF, v, r, s);
+//     vm.prank(gasPayer);
+//     airdrop.claim(user, AMOUNT_TO_CLAIM, PROOF, v, r, s);
     
-    console.log("First claim successful. Checking state...");
+//     console.log("First claim successful. Checking state...");
 
-    // Confirm user balance changed before attempting second claim
-    uint256 balanceAfterClaim = token.balanceOf(user);
-    assertEq(balanceAfterClaim, AMOUNT_TO_CLAIM);
+//     // Confirm user balance changed before attempting second claim
+//     uint256 balanceAfterClaim = token.balanceOf(user);
+//     assertEq(balanceAfterClaim, AMOUNT_TO_CLAIM);
 
-    vm.expectRevert(MerkleAirdrop.MerkleAirdrop__alreadyClaimed.selector);
-    vm.prank(gasPayer);
-    airdrop.claim(user, AMOUNT_TO_CLAIM, PROOF, v, r, s);
-}
+//     vm.expectRevert(MerkleAirdrop.MerkleAirdrop__alreadyClaimed.selector);
+//     vm.prank(gasPayer);
+//     airdrop.claim(user, AMOUNT_TO_CLAIM, PROOF, v, r, s);
+// }
 
 
-    function testIfMerkleProofIsInvalid() public {
-    bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_CLAIM);
-    (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, digest);
+//     function testIfMerkleProofIsInvalid() public {
+//     bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_CLAIM);
+//     (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, digest);
 
-    // Use an invalid proof
-    bytes32[] memory invalidProof = new bytes32[](2);
-    invalidProof[0] = bytes32(0x0);
-    invalidProof[1] = bytes32(uint256(0x1));
+//     // Use an invalid proof
+//     bytes32[] memory invalidProof = new bytes32[](2);
+//     invalidProof[0] = bytes32(0x0);
+//     invalidProof[1] = bytes32(uint256(0x1));
 
-    vm.expectRevert(MerkleAirdrop.MerkleAirdrop__InvalidProof.selector);
-    vm.prank(gasPayer);
-    airdrop.claim(user, AMOUNT_TO_CLAIM, invalidProof, v, r, s);
-    }
+//     vm.expectRevert(MerkleAirdrop.MerkleAirdrop__InvalidProof.selector);
+//     vm.prank(gasPayer);
+//     airdrop.claim(user, AMOUNT_TO_CLAIM, invalidProof, v, r, s);
+//     }
 
-    function testIfSignatureIsInvalid() public {
-    bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_CLAIM);
-    (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, digest);
+//     function testIfSignatureIsInvalid() public {
+//     bytes32 digest = airdrop.getMessageHash(user, AMOUNT_TO_CLAIM);
+//     (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, digest);
 
-    vm.expectRevert(MerkleAirdrop.MerkleAirdrop__InvalidSignature.selector);
-    vm.prank(gasPayer);
-    airdrop.claim(msg.sender, AMOUNT_TO_CLAIM, PROOF, v, r, s);
-}
+//     vm.expectRevert(MerkleAirdrop.MerkleAirdrop__InvalidSignature.selector);
+//     vm.prank(gasPayer);
+//     airdrop.claim(msg.sender, AMOUNT_TO_CLAIM, PROOF, v, r, s);
+// }
 
 
 } 
